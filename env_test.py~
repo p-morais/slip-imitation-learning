@@ -1,0 +1,20 @@
+import gym
+from load_policy_torch import GaussianPolicy
+from torch.autograd import Variable
+from torch import Tensor as T
+
+
+def main():
+    env = gym.make('HalfCheetah-v1')
+    expert_policy_pt = GaussianPolicy('../experts/HalfCheetah-v1.pkl')
+
+    obs = env.reset()
+    for t in range(500):
+        v = Variable(T(obs[None, :]))
+        ac_pt = expert_policy_pt(v).data.numpy()
+        obs, _, _, _ = env.step(ac_pt)
+        env.render()
+
+
+if __name__ == "__main__":
+    main()
